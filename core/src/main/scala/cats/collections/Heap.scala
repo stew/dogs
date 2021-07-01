@@ -129,6 +129,19 @@ sealed abstract class Heap[A] {
   def heapify(a: List[A])(implicit order: Order[A]): Heap[A] =
     Heap.heapify(a)
 
+  def toIterator(implicit order: Order[A]): Iterator[A] = {
+    @scala.annotation.tailrec
+    def build(heap: Heap[A], acc: Stream[A]): Stream[A] = heap match {
+      case Leaf() => acc
+      case b@Branch(_, _, _) => b.pop match {
+        case Some((m, h)) => build(h, acc.append(Seq(m)))
+        case None => acc
+      }
+    }
+
+    build(this, Stream.empty).toIterator
+  }
+
   /**
    * Remove the min element from the heap (the root) and return it along with the updated heap.
    * Order O(log n)
@@ -171,16 +184,7 @@ sealed abstract class Heap[A] {
   /**
    * Returns a sorted list of the elements within the heap.
    */
-  def toList(implicit order: Order[A]): List[A] = {
-    @tailrec
-    def loop(h: Heap[A], acc: List[A]): List[A] =
-      h match {
-        case Branch(m, _, _) => loop(h.remove, m :: acc)
-        case Leaf()          => acc.reverse
-      }
-
-    loop(this, Nil)
-  }
+  def toList(implicit order: Order[A]): List[A] = toIterator.toList
 
   /**
    * do a foldLeft in the same order as toList.
