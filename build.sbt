@@ -168,7 +168,7 @@ lazy val bench = project
     libraryDependencies += {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((3, _)) => "org.scalaz" %% "scalaz-core" % "7.4.0-M7"
-        case _            => "org.scalaz" %% "scalaz-core" % "7.3.3"
+        case _            => "org.scalaz" %% "scalaz-core" % "7.3.4"
       }
     }
   )
